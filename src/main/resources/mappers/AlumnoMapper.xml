@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dam.dam_api.mapper.AlumnoMapper">
+
+    <resultMap id="AlumnoResultMap" type="com.dam.dam_api.model.Alumno">
+        <id property="idAlumno" column="idAlumno"/>
+        <result property="nombre" column="nombre"/>
+        <result property="apellidos" column="apellidos"/>
+        <result property="asignaturas" column="asignaturas" jdbcType="OTHER"
+                typeHandler="com.dam.dam_api.handler.JsonNodeTypeHandler"/>
+        <result property="fechaNacimiento" column="fechaNacimiento"/>
+    </resultMap>
+
+    <select id="findAllAlumnos" resultMap="AlumnoResultMap">
+        SELECT idAlumno, nombre, asignaturas, fechaNacimiento
+        FROM Alumnos;
+    </select>
+
+    <insert id="insertarAlumno" parameterType="com.dam.dam_api.model.Alumno" useGeneratedKeys="true"
+            keyProperty="idAlumno">
+        INSERT INTO Alumnos (nombre, apellidos, asignaturas, fechaNacimiento)
+        VALUES (#{nombre}, #{apellidos},
+        #{asignaturas, jdbcType=OTHER, typeHandler=com.dam.dam_api.handler.JsonNodeTypeHandler}, #{fechaNacimiento})
+    </insert>
+
+    <select id="findAlumnoById" parameterType="long" resultMap="AlumnoResultMap">
+        SELECT idAlumno, nombre, asignaturas, fechaNacimiento
+        FROM Alumnos
+        WHERE idAlumno = #{idAlumno};
+    </select>
+
+    <update id="updateAlumno" parameterType="Alumno">
+        UPDATE Alumnos
+        SET nombre = #{nombre},
+        asignaturas = #{asignaturas, jdbcType=OTHER, typeHandler=com.dam.dam_api.handler.JsonNodeTypeHandler}
+        WHERE idAlumno = #{idAlumno};
+    </update>
+
+    <delete id="deleteAlumno" parameterType="long">
+        DELETE FROM Alumnos
+        WHERE idAlumno = #{idAlumno};
+    </delete>
+
+    <select id="findAlumnosByNombre" parameterType="string" resultMap="AlumnoResultMap">
+        SELECT idAlumno, nombre, asignaturas, fechaNacimiento
+        FROM Alumnos
+        WHERE nombre = #{nombre};
+    </select>
+
+</mapper>

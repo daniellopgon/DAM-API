@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dam.dam_api.mapper.DocumentoMapper">
+
+    <resultMap id="DocumentoResultMap" type="Documento">
+        <id property="idDocumento" column="idDocumento"/>
+        <result property="titulo" column="titulo"/>
+        <result property="dato" column="dato" jdbcType="OTHER"
+                typeHandler="com.dam.dam_api.handler.JsonNodeTypeHandler"/>
+        <result property="fechaCreacion" column="fechaCreacion"/>
+    </resultMap>
+
+    <select id="findAllDocumentos" resultMap="DocumentoResultMap">
+        SELECT idDocumento, titulo, dato, fechaCreacion
+        FROM documentos;
+    </select>
+
+    <insert id="insertarDocument" parameterType="Documento" useGeneratedKeys="false" >
+        INSERT INTO documentos (titulo, dato)
+        VALUES (#{titulo}, #{dato, jdbcType=OTHER, typeHandler=com.dam.dam_api.handler.JsonNodeTypeHandler})
+        RETURNING idDocumento , fechaCreacion;
+    </insert>
+
+    <select id="findDocumentoById" parameterType="long" resultMap="DocumentoResultMap">
+        SELECT idDocumento, titulo, dato, fechaCreacion
+        FROM documentos
+        WHERE idDocumento = #{idDocumento};
+    </select>
+
+    <update id="updateDocumento" parameterType="Documento">
+        UPDATE documentos
+        SET titulo = #{titulo},
+        dato = #{dato, jdbcType=OTHER, typeHandler=com.dam.dam_api.handler.JsonNodeTypeHandler}
+        WHERE idDocumento = #{idDocumento};
+    </update>
+
+    <delete id="deleteDocumento" parameterType="long">
+        DELETE FROM documentos
+        WHERE idDocumento = #{idDocumento};
+    </delete>
+
+    <select id="findDocumentosByAutor" parameterType="string" resultMap="DocumentoResultMap">
+        SELECT idDocumento, titulo, dato, fechaCreacion
+        FROM documentos
+        WHERE dato ->> 'autor' = #{autor};
+    </select>
+
+</mapper>
